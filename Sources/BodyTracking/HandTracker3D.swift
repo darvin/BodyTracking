@@ -68,10 +68,18 @@ public class HandTracker3D: Entity {
         guard
             self.twoDHandTracker.handHasBeenInitiallyIdentified,
             let arView = arView,
-            let currentFrame = arView.session.currentFrame,
-            let sceneDepth = currentFrame.estimatedDepthData
-        else {return}
+            let currentFrame = arView.session.currentFrame else {return}
+        
+        let estimatedSceneDepth = currentFrame.estimatedDepthData
 
+        let capturedSceneDepth = currentFrame.capturedDepthData
+        
+        let getSceneDepthAtPoint = (capturedSceneDepth != nil) ? { (p:CGPoint) -> Float? in
+            capturedSceneDepth?.depthDataMap.value(from:p)
+        } : { (p:CGPoint) -> Float? in
+            estimatedSceneDepth?.value(from:p)
+        }
+        
         //Allow developers to disable this entity for other reasons after the hand has initially been identified.
         if handHasBeenInitiallyIdentified == false && self.isEnabled == false {
             handHasBeenInitiallyIdentified = true
@@ -85,7 +93,7 @@ public class HandTracker3D: Entity {
             guard
                 let screenPosition = self.twoDHandTracker.jointScreenPositions[trackedEnt.key],
                 let avPosition = self.twoDHandTracker.jointAVFoundationPositions[trackedEnt.key],
-                let depthAtPoint = sceneDepth.value(from: avPosition),
+                let depthAtPoint = getSceneDepthAtPoint(avPosition),
                 let worldPosition = worldPosition(jointName: trackedEnt.key, screenPosition: screenPosition, depth: depthAtPoint)
             else {continue}
             

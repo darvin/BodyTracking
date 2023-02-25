@@ -47,7 +47,7 @@ class ARSUIViewHandTracking3D: BodyARView {
     
     func runNewConfig(){
         // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
+        let configuration = ARFaceTrackingConfiguration()
         
         //Goes with (currentFrame.smoothedSceneDepth ?? currentFrame.sceneDepth)?.depthMap
         //let frameSemantics: ARConfiguration.FrameSemantics = [.smoothedSceneDepth, .sceneDepth]
@@ -55,7 +55,7 @@ class ARSUIViewHandTracking3D: BodyARView {
         //Goes with currentFrame.estimatedDepthData
         let frameSemantics: ARConfiguration.FrameSemantics = .personSegmentationWithDepth
         
-        if ARWorldTrackingConfiguration.supportsFrameSemantics(frameSemantics) {
+        if ARFaceTrackingConfiguration.supportsFrameSemantics(frameSemantics) {
             configuration.frameSemantics.insert(frameSemantics)
         }
         // Run the view's session
